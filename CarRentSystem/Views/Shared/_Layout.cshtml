@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CarRentalSystem</title>
+
+    <!-- Bootstrap & Custom Styles -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://bootswatch.com/5/flatly/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CarRentSystem.styles.css" asp-append-version="true" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-car-front-fill text-primary"></i> CarRentalSystem
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (Context.Session.GetString("UserRole") == "Admin")
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="AdminDashboard"><i class="bi bi-house-door"></i> Home</a></li>
+                        }
+                        else if (Context.Session.GetString("UserRole") == "User")
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="CustomerDashboard"><i class="bi bi-house-door"></i> Home</a></li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i> Home</a></li>
+                        }
+
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="AboutPage"><i class="bi bi-info-circle"></i> About</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="FAQ"><i class="bi bi-question-circle"></i> FAQ</a></li>
+
+                        @if (Context.Session.GetString("UserRole") == "User")
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Reservations/AvailableCars"><i class="bi bi-car-front"></i> Available Cars</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Reservations/CustView"><i class="bi bi-clipboard-check"></i> My Reservations</a></li>
+                        }
+
+                        @if (Context.Session.GetString("UserRole") == "Admin")
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Users/AdminManageUsers"><i class="bi bi-people"></i> Manage Users</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Cars/AdminManageCars"><i class="bi bi-car-front"></i> Manage Cars</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Reservations/AdminView"><i class="bi bi-calendar-check"></i> Manage Reservations</a></li>
+                        }
+
+                        @if (Context.Session.GetString("UserRole") == "User" || Context.Session.GetString("UserRole") == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-danger ms-3" href="/Auth/Logout">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a href="/Auth/Register" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-person-plus"></i> Register
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/Auth/Login" class="btn btn-outline-success">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <main role="main" class="pb-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-light text-center py-1 mt-4 border-top">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2025 - CarRentalSystem | <i class="bi bi-telephone"></i> Support: +60123456789</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

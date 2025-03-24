@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Customer Dashboard";
+    var username = Context.Session.GetString("Username");
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold text-primary"><i class="bi bi-person-circle"></i> Welcome, @username!</h1>
+    <p class="lead text-secondary">Easily manage your car reservations and bookings.</p>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+        <!-- View Available Cars -->
+        <div class="col">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary"><i class="bi bi-car-front"></i> Available Cars</h5>
+                    <p class="card-text text-secondary">Browse and reserve a car that fits your journey.</p>
+                    <a href="@Url.Action("AvailableCars", "Reservations")" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Reservations -->
+        <div class="col">
+            <div class="card border-success shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success"><i class="bi bi-calendar-check"></i> My Reservations</h5>
+                    <p class="card-text text-secondary">View and manage your bookings.</p>
+                    <a href="@Url.Action("CustView", "Reservations")" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

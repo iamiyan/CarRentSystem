@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="height: 75vh;">
+    <div class="card shadow p-4" style="width: 400px;">
+        <h2 class="text-center mb-4">🔑 Login</h2>
+
+        @if (!string.IsNullOrEmpty(ViewData["Error"]?.ToString()))
+        {
+            <div class="alert alert-danger">@ViewData["Error"]</div>
+        }
+
+        <form asp-action="Login" asp-controller="Auth" method="post">
+            <div class="mb-3">
+                <label class="form-label">📧 Email:</label>
+                <input type="email" name="Email" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">🔒 Password:</label>
+                <input type="password" name="Password" class="form-control" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a href="@Url.Action("Register", "Auth")">Register</a></p>
+            </div>
+        </form>
+    </div>
+</div>

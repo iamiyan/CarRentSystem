@@ -1,0 +1,113 @@
+﻿@{
+    var userRole = Context.Session.GetString("UserRole");
+}
+
+@if (string.IsNullOrEmpty(userRole))
+{
+    <script>
+        window.location.href = "/Auth/Login"; // Redirect to login if not logged in
+    </script>
+}
+else
+{
+
+    @if (userRole == "User")
+    {
+        <a href="/Reservations/Create" class="btn btn-primary">Create Reservation</a>
+    }
+
+    <h2>Your Reservations</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Car ID</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                @if (userRole == "Admin")  // Only show actions for admin
+                {
+                    <th>Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody id="reservationTableBody">
+            <!-- Reservations will be loaded here -->
+        </tbody>
+    </table>
+
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/api/reservations/user")
+            .then(response => response.json())
+            .then(reservations => {
+                console.log("API Response:", reservations); // Debugging Log
+
+                if (!Array.isArray(reservations)) {
+                    console.error("Error: API response is not an array!", reservations);
+                    return;
+                }
+
+                let tableBody = document.getElementById("reservationTableBody");
+
+                if (reservations.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='5'>No reservations found.</td></tr>";
+                    return;
+                }
+
+                reservations.forEach(reservation => {
+                    let row = `<tr>
+                        <td>${reservation.carId}</td>
+                        <td>${new Date(reservation.startDate).toLocaleDateString()}</td>
+                        <td>${new Date(reservation.endDate).toLocaleDateString()}</td>
+                        <td>${reservation.totalPrice}</td>
+                        <td>${reservation.status}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error("Error loading reservations:", error));
+    });
+
+
+    function editReservation(id) {
+        document.getElementById(`startDate-${id}`).disabled = false;
+        document.getElementById(`endDate-${id}`).disabled = false;
+        document.querySelector(`#reservation-${id} .btn-success`).style.display = "inline-block"; // Show Update Button
+    }
+
+    function updateReservation(id) {
+        let startDate = document.getElementById(`startDate-${id}`).value;
+        let endDate = document.getElementById(`endDate-${id}`).value;
+
+        fetch(`/api/reservations/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ startDate, endDate })
+        })
+        .then(response => response.json())
+        .then(updatedReservation => {
+            document.getElementById(`startDate-${id}`).disabled = true;
+            document.getElementById(`endDate-${id}`).disabled = true;
+            document.querySelector(`#reservation-${id} .btn-success`).style.display = "none"; // Hide Update Button
+            alert("Reservation updated successfully!");
+        })
+        .catch(error => console.error("Error updating reservation:", error));
+    }
+
+    function deleteReservation(id) {
+        if (!confirm("Are you sure you want to delete this reservation?")) return;
+
+        fetch(`/api/reservations/${id}`, { method: "DELETE" })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById(`reservation-${id}`).remove();
+                alert("Reservation deleted successfully!");
+            }
+        })
+        .catch(error => console.error("Error deleting reservation:", error));
+    }
+</script>

@@ -1,0 +1,90 @@
+﻿@model CarRentSystem.Models.Reservation
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center"><i class="bi bi-calendar-check"></i> Make a Reservation</h2>
+
+        <form asp-action="Create" method="post">
+            <input type="hidden" name="CarId" value="@Model.CarId" />
+            <input type="hidden" name="UserId" value="@ViewBag.UserId" />
+
+            @* Retrieve PricePerDay from Car Table *@
+            @{
+                var car = ViewBag.Car as CarRentSystem.Models.Car;
+                var pricePerDay = car != null ? car.PricePerDay : 0;
+            }
+            <input type="hidden" id="PricePerDay" value="@pricePerDay" />
+
+            <div class="mb-3">
+                <label class="form-label fw-bold"><i class="bi bi-car-front"></i> Car Model:</label>
+                <input type="text" class="form-control" value="@car?.Brand @car?.Model" readonly />
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="StartDate" class="form-label fw-bold"><i class="bi bi-calendar"></i> Start Date:</label>
+                    <input type="date" id="StartDate" name="StartDate" class="form-control" required onchange="calculateTotal()" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="EndDate" class="form-label fw-bold"><i class="bi bi-calendar"></i> End Date:</label>
+                    <input type="date" id="EndDate" name="EndDate" class="form-control" required onchange="calculateTotal()" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold"><i class="bi bi-cash-stack"></i> Price Per Day (RM):</label>
+                <input type="text" class="form-control" value="RM @pricePerDay.ToString("0.00")" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label for="TotalPrice" class="form-label fw-bold"><i class="bi bi-calculator"></i> Total Price (RM):</label>
+                <input type="hidden" id="TotalPrice" name="TotalPrice" />
+                <input type="text" id="TotalPriceDisplay" class="form-control fw-bold" readonly />
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Confirm Reservation</button>
+                <a href="/Reservations/AvailableCars" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function calculateTotal() {
+        let startDateValue = document.getElementById("StartDate").value;
+        let endDateValue = document.getElementById("EndDate").value;
+        let pricePerDay = parseFloat(document.getElementById("PricePerDay").value);
+
+        if (!startDateValue || !endDateValue) {
+            document.getElementById("TotalPrice").value = "0.00";
+            document.getElementById("TotalPriceDisplay").value = "RM 0.00";
+            return;
+        }
+
+        let startDate = new Date(startDateValue);
+        let endDate = new Date(endDateValue);
+
+        if (startDate >= endDate) {
+            document.getElementById("TotalPrice").value = "0.00";
+            document.getElementById("TotalPriceDisplay").value = "RM 0.00";
+            return;
+        }
+
+        let days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        let totalPrice = days * pricePerDay;
+
+        // Hidden field for submission (numeric only)
+        document.getElementById("TotalPrice").value = totalPrice.toFixed(2);
+
+        // Read-only display field with "RM"
+        document.getElementById("TotalPriceDisplay").value = "RM " + totalPrice.toFixed(2);
+    }
+
+    // Ensure the function runs when the page loads (in case values are prefilled)
+    window.onload = function () {
+        calculateTotal();
+    };
+
+</script>

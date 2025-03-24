@@ -1,0 +1,69 @@
+﻿@model List<Car>
+
+<div class="container mt-4">
+    <h2 class="text-center"><i class="bi bi-car-front-fill"></i> Manage Cars</h2>
+
+    <!-- Add Car Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <a href="@Url.Action("Create", "Cars")" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add Car
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th><i class="bi bi-building"></i> Brand</th>
+                    <th><i class="bi bi-car-front"></i> Model</th>
+                    <th><i class="bi bi-calendar"></i> Year</th>
+                    <th><i class="bi bi-cash-stack"></i> Price Per Day (RM)</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var car in Model)
+                {
+                    <tr>
+                        <td>@car.Brand</td>
+                        <td>@car.Model</td>
+                        <td>@car.Year</td>
+                        <td><strong>RM @car.PricePerDay</strong></td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Cars", new { id = car.Id })" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCar(@car.Id)">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- JavaScript for Deleting a Car -->
+<script>
+    function deleteCar(carId) {
+        if (confirm("Are you sure you want to delete this car?")) {
+            fetch(`/cars/Delete/${carId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json()) // Ensure response is JSON
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload(); // Refresh the page
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    }
+</script>

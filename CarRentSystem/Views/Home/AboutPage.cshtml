@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    var userRole = Context.Session.GetString("UserRole");
+    var dashboardUrl = "/Home/Index"; // Default for non-logged-in users
+
+    if (userRole == "Admin")
+    {
+        dashboardUrl = "/Home/AdminDashboard";
+    }
+    else if (userRole == "User")
+    {
+        dashboardUrl = "/Home/CustomerDashboard";
+    }
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-3 bg-light">
+        <h1 class="text-center text-primary fw-bold"><i class="bi bi-info-circle"></i> About Our Car Rental System</h1>
+        <p class="text-center text-secondary">Effortless car rentals at your fingertips.</p>
+
+        <hr class="my-4">
+
+        <!-- 🚗 Features Section -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3 class="text-primary"><i class="bi bi-car-front"></i> Key Features</h3>
+                <ul class="list-group">
+                    <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Browse available cars with real-time updates</li>
+                    <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Easy reservation process with automated price calculation</li>
+                    <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Admin panel for managing cars and users</li>
+                    <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Secure login and session management</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-primary"><i class="bi bi-flag"></i> Our Mission</h3>
+                <p>
+                    Our goal is to simplify the car rental process by providing a seamless and efficient system.
+                    Whether you're an administrator managing vehicles or a customer booking a ride, we ensure a smooth experience.
+                </p>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 📞 Contact Section -->
+        <div class="text-center mt-4">
+            <h3 class="text-primary"><i class="bi bi-telephone"></i> Contact Us</h3>
+            <p>Have questions? Reach out to us anytime.</p>
+            <p><i class="bi bi-envelope"></i> <strong>Email:</strong> support@carrental.com</p>
+            <p><i class="bi bi-geo-alt"></i> <strong>Location:</strong> Kuala Lumpur, Malaysia</p>
+        </div>
+
+        <!-- 🔗 Back Button -->
+        <div class="text-center mt-4">
+            <a href="@dashboardUrl" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-house-door"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>

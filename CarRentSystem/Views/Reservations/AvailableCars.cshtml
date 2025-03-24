@@ -1,0 +1,32 @@
+﻿@model IEnumerable<CarRentSystem.Models.Car>
+
+<div class="container">
+    <h2 class="text-center my-4"><i class="bi bi-car-front"></i> Available Cars</h2>
+
+    <div class="row">
+        @foreach (var car in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@car.Brand @car.Model</h5>
+                        <p class="card-text"><strong>Price Per Day:</strong> RM @car.PricePerDay</p>
+
+                        <a asp-action="Create" asp-controller="Reservations"
+                           asp-route-carId="@car.Id" asp-route-pricePerDay="@car.PricePerDay"
+                           class="btn btn-primary w-100">
+                            <i class="bi bi-calendar-check"></i> Reserve Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="CustView" asp-controller="Reservations" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to My Reservations
+        </a>
+    </div>
+</div>

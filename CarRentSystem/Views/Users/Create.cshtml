@@ -1,0 +1,40 @@
+﻿@model User
+
+<div class="container mt-4">
+    <h2 class="text-center"><i class="bi bi-person-plus"></i> Create User</h2>
+    <div class="card shadow-sm p-4">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label for="Name" class="form-label"><i class="bi bi-person"></i> Name:</label>
+                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter full name" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Email" class="form-label"><i class="bi bi-envelope"></i> Email:</label>
+                <input type="email" id="Email" name="Email" class="form-control" placeholder="Enter email address" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Password" class="form-label"><i class="bi bi-key"></i> Password:</label>
+                <input type="text" id="Password" name="Password" class="form-control" placeholder="Enter password" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Role" class="form-label"><i class="bi bi-person-badge"></i> Role:</label>
+                <select id="Role" name="Role" class="form-select" required>
+                    <option value="User">User</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("AdminManageUsers", "Users")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Create User
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

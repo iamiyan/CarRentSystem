@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    var username = Context.Session.GetString("Username");
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold text-primary"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
+    <p class="lead text-secondary">👋 Welcome, <strong>@username</strong>! Manage the car rental system efficiently.</p>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+        <!-- Manage Cars -->
+        <div class="col">
+            <div class="card border-info shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-info"><i class="bi bi-car-front"></i> Manage Cars</h5>
+                    <p class="card-text text-secondary">Add, update, or remove cars from the system.</p>
+                    <a href="@Url.Action("AdminManageCars", "Cars")" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Users -->
+        <div class="col">
+            <div class="card border-warning shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning"><i class="bi bi-people"></i> Manage Users</h5>
+                    <p class="card-text text-secondary">View and manage registered users.</p>
+                    <a href="@Url.Action("AdminManageUsers", "Users")" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Reservations -->
+        <div class="col">
+            <div class="card border-success shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success"><i class="bi bi-calendar-check"></i> Manage Reservations</h5>
+                    <p class="card-text text-secondary">Review and manage customer reservations.</p>
+                    <a href="@Url.Action("AdminView", "Reservations")" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+﻿@model CarRentSystem.Models.Reservation
+
+<div class="container mt-4">
+    <h2 class="text-center"><i class="bi bi-pencil-square"></i> Edit Reservation</h2>
+
+    <form asp-action="UpdateReservation" method="post" class="shadow p-4 rounded bg-light">
+        <input type="hidden" name="CarId" value="@Model.CarId" />
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        @* Retrieve PricePerDay from Car Table *@
+        @{
+            var car = ViewBag.Car as CarRentSystem.Models.Car;
+            var pricePerDay = car != null ? car.PricePerDay : 0;
+        }
+        <input type="hidden" id="PricePerDay" value="@pricePerDay" />
+
+        <div class="mb-3">
+            <label for="StartDate" class="form-label">Start Date:</label>
+            <input type="date" id="StartDate" name="StartDate" class="form-control"
+                   value="@Model.StartDate.ToString("yyyy-MM-dd")" required onchange="calculateTotal()" />
+        </div>
+
+        <div class="mb-3">
+            <label for="EndDate" class="form-label">End Date:</label>
+            <input type="date" id="EndDate" name="EndDate" class="form-control"
+                   value="@Model.EndDate.ToString("yyyy-MM-dd")" required onchange="calculateTotal()" />
+        </div>
+
+        <div class="mb-3">
+            <label for="TotalPrice" class="form-label">Total Price (RM):</label>
+            <input type="text" id="TotalPrice" name="TotalPrice" class="form-control"
+                   value="@Model.TotalPrice" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label for="Status">Status:</label>
+            <select id="Status" name="Status" class="form-control">
+                <option value="Pending" selected="@(Model.Status == "Pending" ? "selected" : null)">Pending</option>
+                <option value="Approved" selected="@(Model.Status == "Approved" ? "selected" : null)">Approved</option>
+                <option value="Rejected" selected="@(Model.Status == "Rejected" ? "selected" : null)">Rejected</option>
+                <option value="Cancelled" selected="@(Model.Status == "Cancelled" ? "selected" : null)">Cancelled</option>
+            </select>
+
+        </div>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Update Reservation
+            </button>
+        </div>
+    </form>
+
+    <div class="text-center mt-3">
+        <a asp-action="AdminView" asp-controller="Reservations" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Reservations
+        </a>
+    </div>
+</div>
+
+<script>
+    function calculateTotal() {
+        let startDateValue = document.getElementById("StartDate").value;
+        let endDateValue = document.getElementById("EndDate").value;
+        let pricePerDay = parseFloat(document.getElementById("PricePerDay").value);
+
+        if (!startDateValue || !endDateValue || isNaN(pricePerDay) || pricePerDay <= 0) {
+            document.getElementById("TotalPrice").value = "0.00";
+            return;
+        }
+
+        let startDate = new Date(startDateValue);
+        let endDate = new Date(endDateValue);
+
+        if (startDate >= endDate) {
+            document.getElementById("TotalPrice").value = "0.00";
+            return;
+        }
+
+        let days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        let totalPrice = days * pricePerDay;
+        document.getElementById("TotalPrice").value = totalPrice.toFixed(2);
+    }
+
+    document.getElementById("StartDate").addEventListener("change", calculateTotal);
+    document.getElementById("EndDate").addEventListener("change", calculateTotal);
+    window.onload = calculateTotal;
+</script>

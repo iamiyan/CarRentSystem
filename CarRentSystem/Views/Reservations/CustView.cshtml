@@ -1,0 +1,123 @@
+﻿@{
+    var userRole = Context.Session.GetString("UserRole");
+}
+@model IEnumerable<CarRentSystem.Models.Car>
+
+@if (string.IsNullOrEmpty(userRole) || userRole != "User")
+{
+    <script>
+        window.location.href = "/Auth/Login"; // Redirect to login if not logged in or not a User
+    </script>
+}
+else
+{
+    <div class="container mt-4">
+        <h2 class="text-center"><i class="bi bi-clock-history"></i> Your Reservations</h2>
+
+        <div id="loadingMessage" class="text-center text-primary mt-3">
+            <i class="bi bi-hourglass-split"></i> Loading reservations...
+        </div>
+
+        <div id="noReservationsMessage" class="alert alert-info text-center mt-3" style="display: none;">
+            <i class="bi bi-info-circle"></i> No reservations found.
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th><i class="bi bi-car-front"></i> Car Model</th>
+                        <th><i class="bi bi-calendar"></i> Start Date</th>
+                        <th><i class="bi bi-calendar"></i> End Date</th>
+                        <th><i class="bi bi-cash-stack"></i> Total Price (RM)</th>
+                        <th><i class="bi bi-check-circle"></i> Status</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationTableBody">
+                    <!-- Reservations will be loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a asp-action="AvailableCars" asp-controller="Reservations" class="btn btn-outline-primary">
+                <i class="bi bi-car-front"></i> View Available Cars
+            </a>
+        </div>
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadReservations(); // ✅ Load reservations on page load
+
+        // ✅ Auto-refresh every 10 seconds
+        setInterval(loadReservations, 10000);
+    });
+
+    function loadReservations() {
+        fetch("/api/reservations/user")
+            .then(response => response.json())
+            .then(reservations => {
+                let tableBody = document.getElementById("reservationTableBody");
+                let loadingMessage = document.getElementById("loadingMessage");
+                let noReservationsMessage = document.getElementById("noReservationsMessage");
+
+                loadingMessage.style.display = "none"; // Hide loading message
+
+                if (!Array.isArray(reservations)) {
+                    console.error("Error: API response is not an array!", reservations);
+                    noReservationsMessage.style.display = "block";
+                    return;
+                }
+
+                if (reservations.length === 0) {
+                    noReservationsMessage.style.display = "block";
+                    return;
+                }
+
+                // ✅ Check if data has changed before updating
+                let newTableContent = reservations.map(reservation => {
+                    return `<tr>
+                        <td>${reservation.carModel}</td>
+                        <td>${formatDate(reservation.startDate)}</td>  <!-- ✅ Proper date format -->
+                        <td>${formatDate(reservation.endDate)}</td>  <!-- ✅ Proper date format -->
+                        <td><strong>RM ${reservation.totalPrice.toFixed(2)}</strong></td>
+                        <td>${getStatusBadge(reservation.status)}</td>
+                    </tr>`;
+                }).join("");
+
+                // ✅ Only update if content has changed (prevents flickering)
+                if (tableBody.innerHTML.trim() !== newTableContent.trim()) {
+                    tableBody.innerHTML = newTableContent;
+                }
+            })
+            .catch(error => {
+                console.error("Error loading reservations:", error);
+                document.getElementById("loadingMessage").style.display = "none";
+                document.getElementById("noReservationsMessage").style.display = "block";
+            });
+    }
+
+    // ✅ Format date to dd-MM-yyyy
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+        return date.toLocaleDateString('en-GB'); // ✅ "dd-MM-yyyy"
+    }
+
+    // ✅ Generate status badge
+    function getStatusBadge(status) {
+        switch (status) {
+            case "Pending":
+                return `<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Pending</span>`;
+            case "Approved":
+                return `<span class="badge bg-success"><i class="bi bi-check-circle"></i> Approved</span>`;
+            case "Rejected":
+                return `<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Rejected</span>`;
+            case "Canceled":
+                return `<span class="badge bg-secondary"><i class="bi bi-slash-circle"></i> Canceled</span>`;
+            default:
+                return `<span class="badge bg-secondary">Unknown</span>`;
+        }
+    }
+</script>
